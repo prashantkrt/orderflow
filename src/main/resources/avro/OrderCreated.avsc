@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "OrderCreated",
+  "namespace": "com.mylearningdesk.orderflow.events.avro",
+  "doc": "Published after an order has been accepted by OrderFlow.",
+  "fields": [
+    {"name": "eventId", "type": "string"},
+    {"name": "orderId", "type": "string"},
+    {"name": "customerEmail", "type": "string"},
+    {"name": "totalAmount", "type": "string"},
+    {"name": "currency", "type": "string", "default": "USD"},
+    {"name": "occurredAtEpochMillis", "type": "long"}
+  ]
+}

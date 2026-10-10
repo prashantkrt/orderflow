@@ -1,0 +1,14 @@
+environment: perf
+
+replicaCount: 2
+
+resources:
+  requests:
+    cpu: "1"
+    memory: 1Gi
+  limits:
+    cpu: "2"
+    memory: 2Gi
+
+autoscaling:
+  enabled: false

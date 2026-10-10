@@ -1,0 +1,40 @@
+{{- if .Values.retry.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "orderflow.fullname" . }}-retry
+  labels:
+    {{- include "orderflow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: retry
+spec:
+  replicas: {{ .Values.retry.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "orderflow.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: retry
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "orderflow.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/environment: {{ .Values.environment | quote }}
+        app.kubernetes.io/component: retry
+    spec:
+      serviceAccountName: {{ default (include "orderflow.fullname" .) .Values.serviceAccount.name }}
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: retry
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: {{ toJson (required "retry.command must be set when retry.enabled is true" .Values.retry.command) }}
+          {{- with .Values.retry.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            {{- include "orderflow.environmentVariables" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.retry.resources | nindent 12 }}
+{{- end }}
